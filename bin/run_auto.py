@@ -11,7 +11,6 @@ from ksz4.reconstruction import setup_ABCD_recon
 from ksz4.utils import get_cl_smooth
 from pixell import curvedsky, enmap, utils as putils
 from scipy.signal import savgol_filter
-from cmbsky import safe_mkdir, get_disable_mpi
 from falafel import utils, qe
 import healpy as hp
 import yaml
@@ -22,6 +21,13 @@ import pickle
 from string import Template
 from pytempura import noise_spec
 
+def get_disable_mpi():
+    try:
+        disable_mpi_env = os.environ['DISABLE_MPI']
+        disable_mpi = True if disable_mpi_env.lower().strip() == "true" else False
+    except:
+        disable_mpi = False
+    return disable_mpi
 
 disable_mpi = get_disable_mpi()
 if not disable_mpi:
@@ -458,7 +464,8 @@ def do_setup(args, verbose=False):
         print(args)
     
     #recon_config = vars(args)
-    safe_mkdir(args.output_dir)
+    os.makedirs(args.output_dir, exist_ok=True)
+    #safe_mkdir(args.output_dir)
 
     #signal filter
     if args.rksz_cl is None:
@@ -960,8 +967,9 @@ def main():
             mean_field_outdir = mean_field_outdir + "_psh"
             
         mlmax=setup["mlmax"]
-            
-        safe_mkdir(mean_field_outdir)
+
+        os.makedirs(mean_field_outdir, exist_ok=True)
+        #safe_mkdir(mean_field_outdir)
 
         #function to get sims
         get_sim_func = eval(args.get_sim_func)

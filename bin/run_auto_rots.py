@@ -10,7 +10,6 @@ from ksz4.cross import four_split_K, split_phi_to_cl, mcrdn0_s4
 #from ksz4.reconstruction import  setup_ABCD_recon, get_cl_smooth
 from pixell import curvedsky, enmap
 from scipy.signal import savgol_filter
-from cmbsky import safe_mkdir, get_disable_mpi
 from falafel import utils, qe
 import healpy as hp
 import yaml
@@ -21,7 +20,14 @@ import pickle
 from string import Template
 from pytempura import noise_spec
 
-disable_mpi = get_disable_mpi()
+def get_disable_mpi():
+    try:
+        disable_mpi_env = os.environ['DISABLE_MPI']
+        disable_mpi = True if disable_mpi_env.lower().strip() == "true" else False
+    except:
+        disable_mpi = False
+    return disable_mpi
+
 if not disable_mpi:
     from mpi4py import MPI
     comm = mpi.MPI.COMM_WORLD
