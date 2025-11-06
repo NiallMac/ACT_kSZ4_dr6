@@ -34,14 +34,15 @@ NSPLIT=4
 #MASK_PATH="/global/homes/m/maccrann/cmb/lensing/code/so-lenspipe/bin/planck/act_mask_20220316_GAL060_rms_70.00_d2.fits"
 #DATA_DIR="/global/cscratch1/sd/maccrann/cmb/act_dr6/ilc_cldata_smooth-301-2_modelsub_v1"
 
+
+with open(opj(dirname(__file__),"../run_auto_defaults.yml"),'rb') as f:
+    DEFAULTS=yaml.safe_load(f)
 #Read in kSZ alms
-default_ksz_alm = utils.change_alm_lmax(hp.fitsfunc.read_alm("../tests/alms_4e3_2048_50_50_ksz.fits"),
+default_ksz_alm = utils.change_alm_lmax(hp.fitsfunc.read_alm(DEFAULTS["ksz_theory_alm_file"]),
                                 6000)
 #cl_rksz = get_cl_fg_smooth(ksz_alm)
 DEFAULT_CL_RKSZ=get_cl_smooth(default_ksz_alm)
 
-with open(opj(dirname(__file__),"../run_auto_defaults.yml"),'rb') as f:
-    DEFAULTS=yaml.safe_load(f)
 
 def get_config(defaults=DEFAULTS,
                description="Do 4pt measurement"):
