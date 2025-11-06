@@ -38,7 +38,7 @@ meanfield_tag: sNone
 apply_extra_mask: sNone
 extra_mask_power: fNone
 smooth_extra_mask: fNone
-ksz_theory_alm_file: sNone
+ksz_theory_alm_file: /global/cfs/projectdirs/act/data/maccrann/ksz_dr6/alms_4e3_2048_50_50_ksz.fits
 px_fullsky_0p5: False
 no_cross: False
 get_sim_func: "get_sim_alm_dr6_hilc"

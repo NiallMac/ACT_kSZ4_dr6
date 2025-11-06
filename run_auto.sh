@@ -6,8 +6,8 @@ export DISABLE_MPI=false
 export MPI4PY_RC_RECV_MPROBE=0
 
 #config file tag
-tag=dr6v4_v4_lmax4000_mask60sk_noisysims_re-run
-    
+tag=dr6v4_v4_lmax4000_mask60sk_noisysims_re-run_newpipe
+
 config=auto_configs/${tag}.yml
 
 #output directory 
@@ -20,11 +20,11 @@ do
 
     #run the auto measurement (multiple processes help for the cross-estimator)
     cmd="srun -u -l -n 8 python bin/run_auto.py ${outdir}/output_${est_maps}_${tag} -c $config --use_mpi True --est_maps $est_maps"
-    echo $cmd
-    $cmd
+    #echo $cmd
+    #$cmd
 
     #rdn0 and meanfield (same script but now use more processees since we're iterating over sims)
-    cmd="srun -u -l -n 32 python bin/run_auto.py ${outdir}/output_${est_maps}_${tag} -c $config --use_mpi True --do_rdn0 True --do_meanfield True  --skip_auto True --est_maps $est_maps"
+    cmd="srun -u -l -n 32 python bin/run_auto.py ${outdir}/output_${est_maps}_${tag} -c $config --use_mpi True --do_rdn0 True --do_meanfield True --est_maps $est_maps"
     echo $cmd
     $cmd
     echo `date`
