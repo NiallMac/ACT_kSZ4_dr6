@@ -263,60 +263,7 @@ def get_sim_model_from_data(path_template, freqs=["90","150"], mlmax=None,
     return cl_signal, cl_noise, cl_split_auto, cl_split_cross
 
 
-def get_sims_from_cls(cl_split_auto_dict, cl_split_cross_dict,
-                      mask,
-                      signal_seed, noise_seed,
-                      nsplit=NSPLIT, w1=1.,
-                      lmax_out=None):
 
-    if lmax_out is None:
-        lmax_out = mlmax
-    
-    channel_pairs = cl_split_auto_dict.keys()
-    channels = []
-    for p in channel_pairs:
-        channels += list(p)
-    channels = list(set(channels))
-    print("getting sims for channels:",channels)
-
-    #make covariance - should be NxNx(lmax+1) where N=len(channels)*nsplit
-    print("getting cov")
-    N = len(channels)*nsplit
-    cov = np.zeros((N,N,mlmax+1))
-    for i,c_i in enumerate(channels):
-        for j,c_j in enumerate(channels):
-            if (c_i, c_j) in cl_split_auto_dict:
-                cl_auto_ij = cl_split_auto_dict[c_i,c_j]
-                cl_cross_ij = cl_split_cross_dict[c_i,c_j]
-            else:
-                cl_auto_ij = cl_split_auto_dict[c_j,c_i]
-                cl_cross_ij = cl_split_cross_dict[c_j,c_i]
-                
-            if mlmax is not None:
-                cl_auto_ij = cl_auto_ij[:mlmax+1]
-                cl_cross_ij = cl_cross_ij[:mlmax+1]
-            for p in range(nsplit):
-                for q in range(nsplit):
-                    if p==q:
-                        cov[i*nsplit+p, j*nsplit+q,:] = cl_auto_ij
-                    else:
-                        cov[i*nsplit+p, j*nsplit+q,:] = cl_cross_ij
-    print("generating alms")
-    alms = curvedsky.rand_alm(cov, seed=signal_seed)
-
-    alms_masked = []
-    for alm in alms:
-        m = enmap.zeros(mask.shape,mask.wcs)
-        curvedsky.alm2map(alm, m, tweak=True)
-        m *= mask
-        alms_masked.append(
-            curvedsky.map2alm(m, lmax=lmax_out, tweak=True)
-            )
-
-    total_alms = {}
-    for i,c in enumerate(channels):
-        total_alms[c] = alms_masked[i*nsplit:(i+1)*nsplit]
-    return total_alms, None, None
 
 def get_alms_dr6_hilc(data_dir="/global/cscratch1/sd/maccrann/cmb/act_dr6/ilc_cldata_smooth-301-2_v1",
                       map_names=["hilc", "hilc-tszandcibd"], sim_seed=None, mlmax=None):
